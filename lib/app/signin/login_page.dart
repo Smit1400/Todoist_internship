@@ -41,7 +41,8 @@ class _LoginPageState extends State<LoginPage> {
           await http.post(Uri.encodeFull(validateUrl), body: jsonData);
       if (response.statusCode == 200) {
         sharedPreferences = await SharedPreferences.getInstance();
-        var encodedJson = jsonDecode(response.body.toString().substring(30));
+        print(response.body);
+        var encodedJson = jsonDecode(response.body.toString());
         setState(() {
           sharedPreferences.setString("token", encodedJson["jwt"]);
           Navigator.of(context).pushAndRemoveUntil(

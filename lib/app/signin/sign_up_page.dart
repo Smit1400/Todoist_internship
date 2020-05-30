@@ -56,7 +56,7 @@ class _SignUpPageState extends State<SignUpPage> {
             await http.post(Uri.encodeFull(loginUrl), body: loginJsonData);
         if (loginResponse.statusCode == 200) {
           var finalData =
-              jsonDecode(loginResponse.body.toString().substring(45));
+              jsonDecode(loginResponse.body.toString().substring(0));
           print(finalData["jwt"]);
           SharedPreferences sharedPreference =
               await SharedPreferences.getInstance();

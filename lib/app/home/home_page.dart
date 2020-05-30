@@ -38,8 +38,8 @@ class _HomePageState extends State<HomePage> {
       var jsonData = jsonEncode(data);
       var response = await http.post(Uri.encodeFull(url), body: jsonData);
       if (response.statusCode == 200) {
-        // print(response.body);
-        var finalData = jsonDecode(response.body.substring(30));
+        print(response.body);
+        var finalData = jsonDecode(response.body);
         setState(() {
           allTasksOfUser = finalData["allTasksOfUser"];
         });
@@ -91,7 +91,7 @@ class _HomePageState extends State<HomePage> {
                 onPressed: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => DisplayListOfUser(),
+                      builder: (context) => DisplayListOfUser.create(context),
                     ),
                   );
                 },
