@@ -63,40 +63,123 @@ class _HomePageState extends State<HomePage> {
   Widget _buildContent(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(16.0),
-      child: Row(
+      child: Column(
         children: <Widget>[
-          Expanded(
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height / 4,
-              child: RaisedButton(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18.0),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        'DateTime wise sorted task',
-                        style: TextStyle(fontSize: 20),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height / 4,
+                  child: RaisedButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18.0),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(
+                            'All Tasks',
+                            style: TextStyle(fontSize: 20),
+                          ),
+                          Text(
+                            "$allTasksOfUser",
+                            textAlign: TextAlign.start,
+                          )
+                        ],
                       ),
-                      Text(
-                        "$allTasksOfUser",
-                        textAlign: TextAlign.start,
-                      )
-                    ],
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              DisplayListOfUser.create(context),
+                        ),
+                      );
+                    },
                   ),
                 ),
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => DisplayListOfUser.create(context),
-                    ),
-                  );
-                },
               ),
-            ),
+              SizedBox(
+                width: 10,
+              ),
+              Expanded(
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height / 4,
+                  child: RaisedButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18.0),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(
+                            'Todays\'s tasks',
+                            style: TextStyle(fontSize: 20),
+                          ),
+                          Text(
+                            "$allTasksOfUser",
+                            textAlign: TextAlign.start,
+                          )
+                        ],
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              DisplayListOfUser.create(context, today: true),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              )
+            ],
+          ),
+          SizedBox(
+            height: 10,
+          ),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height / 4,
+                  child: RaisedButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18.0),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Text(
+                            'Prioritized task',
+                            style: TextStyle(fontSize: 20),
+                          ),
+                          Text(
+                            "$allTasksOfUser",
+                            textAlign: TextAlign.start,
+                          )
+                        ],
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              DisplayListOfUser.create(context, priority: true),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),

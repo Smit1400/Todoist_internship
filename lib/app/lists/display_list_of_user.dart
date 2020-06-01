@@ -7,10 +7,23 @@ import 'package:todoist/app/lists/display_list_bloc.dart';
 import 'package:todoist/app/services/operations.dart';
 
 class DisplayListOfUser extends StatefulWidget {
-  static Widget create(BuildContext context) {
+  bool today;
+  bool priority;
+  final DisplayListBloc bloc;
+  DisplayListOfUser(
+      {@required this.today, @required this.priority, @required this.bloc});
+
+  static Widget create(BuildContext context,
+      {bool today: false, bool priority: false}) {
     return Provider<DisplayListBloc>(
       create: (_) => DisplayListBloc(),
-      child: DisplayListOfUser(),
+      dispose: (context, bloc) => bloc.dispose(),
+      child: Consumer<DisplayListBloc>(
+          builder: (context, bloc, _) => DisplayListOfUser(
+                today: today,
+                priority: priority,
+                bloc: bloc,
+              )),
     );
   }
 
@@ -21,9 +34,6 @@ class DisplayListOfUser extends StatefulWidget {
 class _DisplayListOfUserState extends State<DisplayListOfUser> {
   SharedPreferences sharedPreference;
   TextEditingController _controller;
-  bool time = false;
-  bool priority = false;
-  bool today = false;
   Operations object = OperationServices();
 
   void _addNewTask() {
@@ -54,211 +64,64 @@ class _DisplayListOfUserState extends State<DisplayListOfUser> {
 
   //this method deletes a particular task by a user
   void _delete(String id) async {
-    final bloc = Provider.of<DisplayListBloc>(context, listen: false);
-    bloc.setStreamData(
+    widget.bloc.setStreamData(
         {'loading': true, 'time': false, 'today': false, 'priority': false});
     await object.delete(id);
-    bloc.setStreamData(
+    widget.bloc.setStreamData(
         {'loading': false, 'time': false, 'today': false, 'priority': false});
   }
 
   // this method updates the task name of the user
   void _updateTask(Map data) async {
-    final bloc = Provider.of<DisplayListBloc>(context, listen: false);
-    bloc.setStreamData(
+    widget.bloc.setStreamData(
         {'loading': true, 'time': false, 'today': false, 'priority': false});
     await object.updateTask(data);
-    bloc.setStreamData(
+    widget.bloc.setStreamData(
         {'loading': false, 'time': false, 'today': false, 'priority': false});
   }
 
   // this method is to set the priority of a task to 1
   void _starTask(Map data) async {
-    final bloc = Provider.of<DisplayListBloc>(context, listen: false);
-    bloc.setStreamData(
+    widget.bloc.setStreamData(
         {'loading': true, 'time': false, 'today': false, 'priority': false});
     await object.starTask(data);
-    bloc.setStreamData(
+    widget.bloc.setStreamData(
+        {'loading': false, 'time': false, 'today': false, 'priority': false});
+  }
+
+  void _unstarTask(Map data) async {
+    widget.bloc.setStreamData(
+        {'loading': true, 'time': false, 'today': false, 'priority': false});
+    await object.unstarTask(data);
+    widget.bloc.setStreamData(
         {'loading': false, 'time': false, 'today': false, 'priority': false});
   }
 
   // this method is to set the  of a task to completed
   void _completeTask(Map data) async {
-    final bloc = Provider.of<DisplayListBloc>(context, listen: false);
-    bloc.setStreamData(
+    widget.bloc.setStreamData(
         {'loading': true, 'time': false, 'today': false, 'priority': false});
     await object.completeTask(data);
-    bloc.setStreamData(
+    widget.bloc.setStreamData(
         {'loading': false, 'time': false, 'today': false, 'priority': false});
   }
 
   @override
   Widget build(BuildContext context) {
-    final bloc = Provider.of<DisplayListBloc>(context, listen: false);
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: Text(
-          'Tasks',
-          style: TextStyle(
-            color: Colors.teal,
-            fontSize: 25,
-          ),
-        ),
-        actions: <Widget>[
-          FlatButton.icon(
-            onPressed: () {
-              sharedPreference.clear();
-              Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => LandingPage()),
-                  (Route<dynamic> route) => false);
-            },
-            icon: Icon(
-              Icons.people,
+          backgroundColor: Colors.black,
+          title: Text(
+            'Tasks',
+            style: TextStyle(
               color: Colors.teal,
+              fontSize: 25,
             ),
-            label: Text('Logout', style: TextStyle(color: Colors.teal)),
           ),
-          FlatButton.icon(
-            onPressed: () async {
-              var result = await showDialog(
-                  context: context,
-                  builder: (context) {
-                    return Dialog(
-                      child: Container(
-                        color: Colors.grey,
-                        height: MediaQuery.of(context).size.height / 2,
-                        child: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Filter",
-                                style: TextStyle(
-                                    color: Colors.black, fontSize: 25),
-                                textAlign: TextAlign.center,
-                              ),
-                              SizedBox(height: 20),
-                              SizedBox(
-                                width: 320.0,
-                                height: 50,
-                                child: RaisedButton(
-                                  onPressed: () {
-                                    Navigator.pop(context, "Time");
-                                  },
-                                  child: Text(
-                                    "Time Wise Sort",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                  color: Colors.black,
-                                ),
-                              ),
-                              SizedBox(height: 10),
-                              SizedBox(
-                                width: 320.0,
-                                height: 50,
-                                child: RaisedButton(
-                                  onPressed: () {
-                                    Navigator.pop(context, "Today");
-                                  },
-                                  child: Text(
-                                    "Today\'s tasks",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                  color: Colors.black,
-                                ),
-                              ),
-                              SizedBox(height: 10),
-                              SizedBox(
-                                width: 320.0,
-                                height: 50,
-                                child: RaisedButton(
-                                  onPressed: () {
-                                    Navigator.pop(context, "Priority");
-                                  },
-                                  child: Text(
-                                    "Prioritized tasks",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                  color: Colors.black,
-                                ),
-                              ),
-                              SizedBox(height: 10),
-                              SizedBox(
-                                width: 320.0,
-                                height: 50,
-                                child: RaisedButton(
-                                  onPressed: () {
-                                    Navigator.pop(context, "All");
-                                  },
-                                  child: Text(
-                                    "All Tasks",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  });
-              print(result);
-              if (result == "Time") {
-                final bloc =
-                    Provider.of<DisplayListBloc>(context, listen: false);
-                bloc.setStreamData({
-                  'loading': false,
-                  'time': true,
-                  'today': false,
-                  'priority': false
-                });
-              }
-              if (result == "Today") {
-                final bloc =
-                    Provider.of<DisplayListBloc>(context, listen: false);
-                bloc.setStreamData({
-                  'loading': false,
-                  'time': false,
-                  'today': true,
-                  'priority': false
-                });
-              }
-              if (result == "All") {
-                final bloc =
-                    Provider.of<DisplayListBloc>(context, listen: false);
-                bloc.setStreamData({
-                  'loading': false,
-                  'time': false,
-                  'today': false,
-                  'priority': false
-                });
-              }
-              if (result == "Priority") {
-                final bloc =
-                    Provider.of<DisplayListBloc>(context, listen: false);
-                bloc.setStreamData({
-                  'loading': false,
-                  'time': false,
-                  'today': false,
-                  'priority': true
-                });
-              }
-            },
-            icon: Icon(
-              Icons.filter_list,
-              color: Colors.teal,
-            ),
-            label: Text('Sort', style: TextStyle(color: Colors.teal)),
-          ),
-        ],
-      ),
+          actions: _actionContent()),
       body: StreamBuilder<Map<String, bool>>(
-          stream: bloc.stream,
+          stream: widget.bloc.stream,
           initialData: {
             'loading': false,
             'time': false,
@@ -270,6 +133,8 @@ class _DisplayListOfUserState extends State<DisplayListOfUser> {
               return _loading();
             }
             return _buildContent(context, snapshot.data);
+
+            // return _loading();
           }),
       floatingActionButton: FlatButton(
         child: Row(
@@ -296,7 +161,8 @@ class _DisplayListOfUserState extends State<DisplayListOfUser> {
           if (snapshot.hasData) {
             List data = snapshot.data;
             if (data.isNotEmpty) {
-              if (streamData['today']) {
+              data = snapshot.data;
+              if (streamData['today'] == true || widget.today == true) {
                 for (var instance in data) {
                   DateTime date = DateTime.parse(instance["date_time"]);
                   DateTime now = DateTime.now();
@@ -306,16 +172,17 @@ class _DisplayListOfUserState extends State<DisplayListOfUser> {
                     instance["date_time"] = "not today";
                   }
                 }
-              }
-              if (streamData['priority']) {
+              } else if (streamData['priority'] == true ||
+                  widget.priority == true) {
                 for (var instance in data) {
                   if (instance["priority"] == "0") {
                     instance["date_time"] = "not today";
                   }
                 }
-              }
-              if (streamData['time']) {
+              } else if (streamData['time']) {
                 data = List.from(data.reversed);
+              } else {
+                data = data;
               }
               return SafeArea(
                 child: ListView.builder(
@@ -384,7 +251,7 @@ class _DisplayListOfUserState extends State<DisplayListOfUser> {
                                       "priority": "1"
                                     });
                                   } else {
-                                    _starTask({
+                                    _unstarTask({
                                       "id": data[index]["id"],
                                       "priority": "0"
                                     });
@@ -404,11 +271,183 @@ class _DisplayListOfUserState extends State<DisplayListOfUser> {
             } else {
               return _emptyPageContent("");
             }
-          } else if (snapshot.hasData) {
+          } else if (snapshot.hasError) {
             _emptyPageContent("Some Error Occured");
           }
           return _loading();
         });
+  }
+
+  List<Widget> _actionContent() {
+    return <Widget>[
+      FlatButton.icon(
+        onPressed: () {
+          sharedPreference.clear();
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => LandingPage()),
+              (Route<dynamic> route) => false);
+        },
+        icon: Icon(
+          Icons.people,
+          color: Colors.teal,
+        ),
+        label: Text('Logout', style: TextStyle(color: Colors.teal)),
+      ),
+      FlatButton.icon(
+        onPressed: () async {
+          var result = await showDialog(
+              context: context,
+              builder: (context) {
+                return Dialog(
+                  child: Container(
+                    color: Colors.grey,
+                    height: MediaQuery.of(context).size.height / 2,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Filter",
+                            style: TextStyle(color: Colors.black, fontSize: 25),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: 20),
+                          SizedBox(
+                            width: 320.0,
+                            height: 50,
+                            child: RaisedButton(
+                              onPressed: () {
+                                Navigator.pop(context, "Time");
+                              },
+                              child: Text(
+                                "Time Wise Sort",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              color: Colors.black,
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          SizedBox(
+                            width: 320.0,
+                            height: 50,
+                            child: RaisedButton(
+                              onPressed: () {
+                                Navigator.pop(context, "Today");
+                              },
+                              child: Text(
+                                "Today\'s tasks",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              color: Colors.black,
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          SizedBox(
+                            width: 320.0,
+                            height: 50,
+                            child: RaisedButton(
+                              onPressed: () {
+                                Navigator.pop(context, "Priority");
+                              },
+                              child: Text(
+                                "Prioritized tasks",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              color: Colors.black,
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          SizedBox(
+                            width: 320.0,
+                            height: 50,
+                            child: RaisedButton(
+                              onPressed: () {
+                                Navigator.pop(context, "All");
+                              },
+                              child: Text(
+                                "All Tasks",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              color: Colors.black,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              });
+          print(result);
+          if (result == "Time") {
+            final bloc = Provider.of<DisplayListBloc>(context, listen: false);
+            bloc.setStreamData({
+              'loading': false,
+              'time': true,
+              'today': false,
+              'priority': false
+            });
+            if (widget.today == true || widget.priority == true) {
+              setState(() {
+                widget.today = false;
+                widget.priority = false;
+              });
+            }
+          }
+          if (result == "Today") {
+            final bloc = Provider.of<DisplayListBloc>(context, listen: false);
+            bloc.setStreamData({
+              'loading': false,
+              'time': false,
+              'today': true,
+              'priority': false
+            });
+            if (widget.today == true || widget.priority == true) {
+              setState(() {
+                widget.today = false;
+                widget.priority = false;
+              });
+            }
+          }
+          if (result == "All") {
+            final bloc = Provider.of<DisplayListBloc>(context, listen: false);
+            bloc.setStreamData({
+              'loading': false,
+              'time': false,
+              'today': false,
+              'priority': false
+            });
+            if (widget.today == true || widget.priority == true) {
+              setState(() {
+                widget.today = false;
+                widget.priority = false;
+              });
+            }
+          }
+          if (result == "Priority") {
+            final bloc = Provider.of<DisplayListBloc>(context, listen: false);
+            bloc.setStreamData({
+              'loading': false,
+              'time': false,
+              'today': false,
+              'priority': true
+            });
+            if (widget.today == true || widget.priority == true) {
+              setState(() {
+                widget.today = false;
+                widget.priority = false;
+              });
+            }
+          }
+        },
+        icon: Icon(
+          Icons.filter_list,
+          color: Colors.teal,
+        ),
+        label: Text('Sort', style: TextStyle(color: Colors.teal)),
+      ),
+    ];
   }
 
   Widget _loading() {

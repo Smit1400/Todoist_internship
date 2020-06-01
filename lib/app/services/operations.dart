@@ -8,6 +8,7 @@ abstract class Operations {
   Future listOfTasks();
   Future<void> updateTask(Map data);
   Future<void> starTask(Map data);
+  Future<void> unstarTask(Map data);
   Future<void> completeTask(Map data);
 }
 
@@ -57,6 +58,13 @@ class OperationServices extends Operations {
   Future<void> starTask(Map data) async {
     var updateJsonData = jsonEncode(data);
     String url = "https://todoistapi.000webhostapp.com/star_task.php";
+    var response = await http.post(Uri.encodeFull(url), body: updateJsonData);
+    if (response.statusCode == 200) {}
+  }
+
+  Future<void> unstarTask(Map data) async {
+    var updateJsonData = jsonEncode(data);
+    String url = "https://todoistapi.000webhostapp.com/unstar_task.php";
     var response = await http.post(Uri.encodeFull(url), body: updateJsonData);
     if (response.statusCode == 200) {}
   }
